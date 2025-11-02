@@ -1,0 +1,43 @@
+{
+	"name": "productos_CAT_MAN_csv",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_sa_raw_examen",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "BRONZE"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "Productos_CAT_MANT.csv",
+				"container": "raw-examen"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "ID",
+				"type": "String"
+			},
+			{
+				"name": "CAT",
+				"type": "String"
+			},
+			{
+				"name": "SUBCAT",
+				"type": "String"
+			},
+			{
+				"name": "MAINTENANCE",
+				"type": "String"
+			}
+		]
+	}
+}
