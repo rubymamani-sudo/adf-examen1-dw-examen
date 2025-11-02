@@ -1,0 +1,54 @@
+{
+	"name": "ds_sql_silver_producto",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_sql_dw_examen",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "SILVER"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "prd_key",
+				"type": "nvarchar"
+			},
+			{
+				"name": "prd_id",
+				"type": "nvarchar"
+			},
+			{
+				"name": "prd_nm",
+				"type": "nvarchar"
+			},
+			{
+				"name": "prd_cost",
+				"type": "decimal",
+				"precision": 10,
+				"scale": 2
+			},
+			{
+				"name": "prd_line",
+				"type": "nvarchar"
+			},
+			{
+				"name": "prd_category",
+				"type": "nvarchar"
+			},
+			{
+				"name": "prd_subcategory",
+				"type": "nvarchar"
+			},
+			{
+				"name": "prd_maintenance",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "silver",
+			"table": "dim_producto"
+		}
+	}
+}
