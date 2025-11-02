@@ -5,6 +5,9 @@
 			"referenceName": "ls_sa_raw_examen",
 			"type": "LinkedServiceReference"
 		},
+		"folder": {
+			"name": "BRONZE"
+		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {

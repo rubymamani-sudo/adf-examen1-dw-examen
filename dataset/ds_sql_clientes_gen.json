@@ -1,0 +1,32 @@
+{
+	"name": "ds_sql_clientes_gen",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_sql_dw_examen",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "BRONZE"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "CID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BDATE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "GEN",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "bronze",
+			"table": "clientes_bdate_gen"
+		}
+	}
+}

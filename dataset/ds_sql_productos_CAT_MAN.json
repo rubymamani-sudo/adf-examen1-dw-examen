@@ -1,0 +1,36 @@
+{
+	"name": "ds_sql_productos_CAT_MAN",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_sql_dw_examen",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "BRONZE"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CAT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SUBCAT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MAINTENANCE",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "bronze",
+			"table": "productos_cat_mant"
+		}
+	}
+}

@@ -1,0 +1,52 @@
+{
+	"name": "ds_sql_detalle_ventas",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_sql_dw_examen",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "BRONZE"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "sls_ord_num",
+				"type": "nvarchar"
+			},
+			{
+				"name": "sls_prd_key",
+				"type": "nvarchar"
+			},
+			{
+				"name": "sls_cust_id",
+				"type": "nvarchar"
+			},
+			{
+				"name": "sls_order_dt",
+				"type": "nvarchar"
+			},
+			{
+				"name": "sls_ship_dt",
+				"type": "nvarchar"
+			},
+			{
+				"name": "sls_sales",
+				"type": "nvarchar"
+			},
+			{
+				"name": "sls_quantity",
+				"type": "nvarchar"
+			},
+			{
+				"name": "sls_price",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "bronze",
+			"table": "detalle_ventas"
+		}
+	}
+}
