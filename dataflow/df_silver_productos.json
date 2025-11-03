@@ -1,0 +1,118 @@
+{
+	"name": "df_silver_productos",
+	"properties": {
+		"folder": {
+			"name": "BRONZE/SILVER"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "productos_CAT_MAN_csv",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				},
+				{
+					"dataset": {
+						"referenceName": "productos_csv",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_sql_silver_producto",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "derivedColumn2"
+				},
+				{
+					"name": "join1"
+				},
+				{
+					"name": "cast1"
+				},
+				{
+					"name": "derivedColumn3"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          ID as string,",
+				"          CAT as string,",
+				"          SUBCAT as string,",
+				"          MAINTENANCE as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source1",
+				"source(output(",
+				"          prd_id as string,",
+				"          prd_key as string,",
+				"          prd_nm as string,",
+				"          prd_cost as string,",
+				"          prd_line as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source2",
+				"source1 derive(ID = replace(ID, '_', '-')) ~> derivedColumn1",
+				"source2 derive(prd_key = substring(prd_key, 1, 5)) ~> derivedColumn2",
+				"derivedColumn1, derivedColumn2 join(ID == prd_key,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"join1 cast(output(",
+				"          prd_id as integer,",
+				"          prd_cost as decimal(10,0)",
+				"     ),",
+				"     errors: true) ~> cast1",
+				"cast1 derive(MAINTENANCE = iif(trim(MAINTENANCE) == 'Yes', 'Sí', 'No')) ~> derivedColumn3",
+				"derivedColumn3 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          prd_key as string,",
+				"          prd_id as string,",
+				"          prd_nm as string,",
+				"          prd_cost as decimal(10,2),",
+				"          prd_line as string,",
+				"          prd_category as string,",
+				"          prd_subcategory as string,",
+				"          prd_maintenance as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'allErrors',",
+				"     transactionCommit: 'single',",
+				"     reportSuccessOnError: false,",
+				"     mapColumn(",
+				"          prd_key,",
+				"          prd_nm,",
+				"          prd_cost,",
+				"          prd_line,",
+				"          prd_category = CAT,",
+				"          prd_subcategory = SUBCAT,",
+				"          prd_maintenance = MAINTENANCE",
+				"     )) ~> sink1"
+			]
+		}
+	}
+}
