@@ -1,0 +1,49 @@
+{
+	"name": "ds_gold_cliente",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_sql_dw_examen",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "GOLD"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "id_cliente",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "cst_key_bk",
+				"type": "nvarchar"
+			},
+			{
+				"name": "nombre_completo",
+				"type": "nvarchar"
+			},
+			{
+				"name": "estado_civil",
+				"type": "nvarchar"
+			},
+			{
+				"name": "genero",
+				"type": "nvarchar"
+			},
+			{
+				"name": "fecha_nacimiento",
+				"type": "date"
+			},
+			{
+				"name": "pais",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "gold",
+			"table": "dim_cliente"
+		}
+	}
+}

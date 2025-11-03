@@ -1,0 +1,55 @@
+{
+	"name": "ds_gold_producto",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_sql_dw_examen",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "GOLD"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "id_producto",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "prd_key_bk",
+				"type": "nvarchar"
+			},
+			{
+				"name": "nombre_producto",
+				"type": "nvarchar"
+			},
+			{
+				"name": "costo",
+				"type": "decimal",
+				"precision": 10,
+				"scale": 2
+			},
+			{
+				"name": "linea_producto",
+				"type": "nvarchar"
+			},
+			{
+				"name": "categoria",
+				"type": "nvarchar"
+			},
+			{
+				"name": "subcategoria",
+				"type": "nvarchar"
+			},
+			{
+				"name": "mantenimiento",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "gold",
+			"table": "dim_producto"
+		}
+	}
+}

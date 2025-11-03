@@ -15,10 +15,24 @@
 					"name": "source1"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_sql_silver_fac_ventas",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
 			"transformations": [
 				{
 					"name": "derivedColumn1"
+				},
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "select1"
 				}
 			],
 			"scriptLines": [
@@ -41,7 +55,40 @@
 				"          sls_sales = toDecimal(trim(sls_sales)),",
 				"          sls_price = toDecimal(trim(sls_price)),",
 				"          sls_order_dt = toDate(sls_order_dt, 'yyyyMMdd'),",
-				"          sls_ship_dt = toDate(sls_ship_dt, 'yyyyMMdd')) ~> derivedColumn1"
+				"          sls_ship_dt = toDate(sls_ship_dt, 'yyyyMMdd')) ~> derivedColumn1",
+				"derivedColumn1 filter(!isNull(sls_sales) && !isNull(sls_quantity)) ~> filter1",
+				"filter1 select(mapColumn(",
+				"          sls_ord_num,",
+				"          sls_prd_key,",
+				"          sls_cust_id,",
+				"          sls_order_dt,",
+				"          sls_ship_dt,",
+				"          sls_sales,",
+				"          sls_quantity,",
+				"          sls_price",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          sls_ord_num as string,",
+				"          sls_prd_key as string,",
+				"          sls_cust_id as string,",
+				"          sls_order_dt as date,",
+				"          sls_ship_dt as date,",
+				"          sls_sales as decimal(18,2),",
+				"          sls_quantity as integer,",
+				"          sls_price as decimal(18,2)",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
 			]
 		}
 	}
