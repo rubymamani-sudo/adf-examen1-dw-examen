@@ -1,0 +1,148 @@
+{
+	"name": "df_silver_clientes",
+	"properties": {
+		"folder": {
+			"name": "BRONZE/SILVER"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_sql_clientes",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_sql_clientes_gen",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_sql_cliente_location",
+						"type": "DatasetReference"
+					},
+					"name": "source3"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_sql_silver_clientes",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "derivedColumn2"
+				},
+				{
+					"name": "derivedColumn3"
+				},
+				{
+					"name": "join1"
+				},
+				{
+					"name": "join2"
+				},
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          cst_id as string,",
+				"          cst_key as string,",
+				"          cst_firstname as string,",
+				"          cst_lastname as string,",
+				"          cst_marital_status as string,",
+				"          cst_gndr as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> source1",
+				"source(output(",
+				"          CID as string,",
+				"          BDATE as string,",
+				"          GEN as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> source2",
+				"source(output(",
+				"          CID as string,",
+				"          CNTRY as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> source3",
+				"source2 derive(CID = substring(CID, 4, length(CID)-3)) ~> derivedColumn1",
+				"source1 derive(cst_key = trim(cst_key)) ~> derivedColumn2",
+				"source3 derive(CID = trim(replace(CID, '-', ''))) ~> derivedColumn3",
+				"derivedColumn2, derivedColumn1 join(cst_key == CID,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"join1, derivedColumn3 join(cst_key == derivedColumn3@CID,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join2",
+				"join2 select(mapColumn(",
+				"          cst_id,",
+				"          cst_key,",
+				"          cst_firstname,",
+				"          cst_lastname,",
+				"          cst_marital_status,",
+				"          cst_gndr,",
+				"          cst_birth = BDATE,",
+				"          cst_country = CNTRY",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          cst_key as string,",
+				"          cst_id as string,",
+				"          cst_firstname as string,",
+				"          cst_lastname as string,",
+				"          cst_marital_status as string,",
+				"          cst_gndr as string,",
+				"          cst_birth_date as date,",
+				"          cst_country as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          cst_id,",
+				"          cst_key,",
+				"          cst_firstname,",
+				"          cst_lastname,",
+				"          cst_marital_status,",
+				"          cst_gndr,",
+				"          cst_birth",
+				"     )) ~> sink1"
+			]
+		}
+	}
+}
