@@ -1,0 +1,104 @@
+{
+	"name": "df_Dim_clientes_gold",
+	"properties": {
+		"folder": {
+			"name": "GOLD"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_sql_silver_clientes",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_gold_cliente",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "select2"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          cst_key as string,",
+				"          cst_id as string,",
+				"          cst_firstname as string,",
+				"          cst_lastname as string,",
+				"          cst_marital_status as string,",
+				"          cst_gndr as string,",
+				"          cst_birth_date as date,",
+				"          cst_country as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> source1",
+				"source1 filter( !isNull(cst_id) && !isNull(cst_firstname) && !isNull(cst_lastname)",
+				") ~> filter1",
+				"filter1 select(mapColumn(",
+				"          cst_key,",
+				"          cst_id,",
+				"          cst_firstname,",
+				"          cst_lastname,",
+				"          cst_marital_status,",
+				"          cst_gndr,",
+				"          cst_birth_date,",
+				"          cst_country",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 derive(cst_firstname = concat(cst_firstname, ' ', cst_lastname)) ~> derivedColumn1",
+				"derivedColumn1 select(mapColumn(",
+				"          cst_key,",
+				"          cst_id,",
+				"          cst_firstname,",
+				"          cst_gndr,",
+				"          cst_birth_date,",
+				"          cst_country",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"select2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          id_cliente as integer,",
+				"          cst_key_bk as string,",
+				"          nombre_completo as string,",
+				"          estado_civil as string,",
+				"          genero as string,",
+				"          fecha_nacimiento as date,",
+				"          pais as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     truncate:true,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
+			]
+		}
+	}
+}
